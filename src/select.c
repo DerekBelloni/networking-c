@@ -38,24 +38,18 @@ int find_free_slot() {
 };
 
 int main() {
-    // initialize variables for fd's
     int listen_fd, conn_fd, nfds, freeSlot;
-    // initialize variables for socket structs
     struct sockaddr_in server_addr, client_addr;
-    // initialize variables for fd sets
     fd_set read_fds, write_fds;
 
-    // initialize the clients
     init_clients();
 
-    // create listening socket
     listen_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_fd == -1) {
         perror("socket");
         return -1;
     }
 
-    // set up server address structure
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = 0;
@@ -77,15 +71,13 @@ int main() {
 
     printf("Server listening on port %d\n", PORT);
     
-    // Handle select() functionality
     while(1) {
         FD_ZERO(&read_fds);
-        // FD_ZERO(&write_fds); // If you're not using write_fds yet, this can be omitted
+        // FD_ZERO(&write_fds);
 
         FD_SET(listen_fd, &read_fds);
         nfds = listen_fd;
 
-        // loop through clientStates and add active connections to read set
         for (int i = 0; i < MAX_CLIENTS; i++) {
             if (clientStates[i].fd != -1) {
                 FD_SET(clientStates[i].fd, &read_fds);
@@ -93,16 +85,15 @@ int main() {
             }
         }
 
-        nfds += 1; // nfds should be 1 more than the highest file descriptor number
+        nfds += 1;
 
-        // Wait for activity on one of the sockets
         if (select(nfds, &read_fds, NULL, NULL, NULL) == -1) {
             perror("select");
             return -1;
         }
 
         socklen_t client_addr_len = sizeof(client_addr);
-        // Check for new connections on the listening socket
+
         if (FD_ISSET(listen_fd, &read_fds)) {
             conn_fd = accept(listen_fd, (struct sockaddr*)&client_addr, &client_addr_len);
             if (conn_fd == -1) {
@@ -111,7 +102,6 @@ int main() {
             }
 
             printf("New Connection: %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-            // Find a free slot for our new connection
             freeSlot = find_free_slot();
             if (freeSlot == -1) {
                 printf("Server is full: closing new connection\n");
@@ -121,13 +111,11 @@ int main() {
             }
         }
 
-        // Now handle every other client inside the server
         for (int i = 0; i < MAX_CLIENTS; i++) {
             if (clientStates[i].fd != -1 && FD_ISSET(clientStates[i].fd, &read_fds)) {
                 printf("Checking client %d\n", i);
                 ssize_t bytes_read = read(clientStates[i].fd, clientStates[i].buffer, BUFFER_SIZE - 1);
 
-                // if bytes_read is <= 0, close the fd and set clientStates[i].fd = -1
                 if (bytes_read <= 0) {
                     close(clientStates[i].fd);
                     clientStates[i].fd = -1;

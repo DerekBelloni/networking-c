@@ -4,16 +4,9 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-// Creating a field that will represent the different types of protocol headers we can have
 typedef enum {
-    // A named number that is going to represent the 'hello' message in our protocol 
     PROTO_HELLO,
 } proto_type_e;
-
-// Header of our protocol
-// Will have length of the protocol
-// And the type of the field contained in the protocol
-// What we are constructing is known as TLV (type-length-value system)
 typedef struct {
     proto_type_e type;
     unsigned short len;
@@ -53,7 +46,6 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in serverInfo = {0}; 
 
     serverInfo.sin_family = AF_INET;
-    // Specify the server IP address to connect to, will take an argument from the cli
     serverInfo.sin_addr.s_addr = inet_addr(argv[1]);
     serverInfo.sin_port = htons(5555);
 
