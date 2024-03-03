@@ -5,11 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/select.h>
 #include <string.h>
-// I want to write a simple program using select to allow two clients to connect at the same time
-// I will use netcat for connecting as client
-// I need a a global struct for the client state
-// I dont think I need a state machine for this, just an fd and a buffer
-// I need to define max clients, port, buffer size
+
 #define MAX_CLIENTS 2
 #define PORT 9129
 #define BUFFER_SIZE 4096
