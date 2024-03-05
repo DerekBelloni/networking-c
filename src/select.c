@@ -69,7 +69,7 @@ int main() {
     
     while(1) {
         FD_ZERO(&read_fds);
-        // FD_ZERO(&write_fds);
+        FD_ZERO(&write_fds);
 
         FD_SET(listen_fd, &read_fds);
         nfds = listen_fd;
