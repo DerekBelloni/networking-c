@@ -109,7 +109,6 @@ int main() {
 
         for (int i = 0; i < MAX_CLIENTS; i++) {
             if (clientStates[i].fd != -1 && FD_ISSET(clientStates[i].fd, &read_fds)) {
-                printf("Checking client %d\n", i);
                 ssize_t bytes_read = read(clientStates[i].fd, clientStates[i].buffer, BUFFER_SIZE - 1);
 
                 if (bytes_read <= 0) {
