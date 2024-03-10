@@ -116,7 +116,7 @@ int main() {
             break; // Exit or handle error appropriately
         }
 
-        // Check if there's an incoming connection
+        // Check if there's an incoming connection on the listen_fd
         if (fds[0].revents & POLLIN) {
             conn_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &client_addr_len);
             if (conn_fd == -1) {
